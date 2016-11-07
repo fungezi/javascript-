@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>算法界面演示</title>
+	<link rel="stylesheet" type="text/css" href="bt.css">
+	<script type="text/javascript" src="jq.js"></script>
+	<script type="text/javascript" src="bt.js"></script>
+	<style type="text/css">
+		*{
+			padding: 0px;
+			margin: 0px;
+		}
+		#clock{
+			border:1px solid #ccc;
+		}
+		.clockCon{
+			width: 200px;
+			margin: 50px auto;
+		}
+		.blur-img{
+			position: relative;
+			width: 600px;
+			margin: 0px auto;
+		}
+		.blur-img img{
+			width: 100%;
+			filter: blur(5px);
+			-webkit-filter: blur(10px);
+		}
+		#blur-image{
+			/*background-color: red;*/
+			position: absolute;
+			top: 0px;
+			left: 0px;
+		}
+		
+		#resetBtn{
+			/*background-color: red;*/
+			left: 200px;
+		}
+		#openBtn{
+			/*background-color: yellow;*/
+			right: 200px;
+		}
+		.btn{
+			position: absolute;
+			bottom: 20px;
+		}
+		.timeCut{
+			/*background-color: red;*/
+			margin: 0px auto;
+			display: block;
+			width: 1200px;
+		}
+		#ball{
+			background-color: #ccc;
+			margin:0px auto;
+			display: block;
+		}
+	</style>
+	<script type="text/javascript">
+		(function(){
+			window.onload = function(){
+			var dom = document.getElementById('clock');
+			var ctx = dom.getContext('2d');
+			var width = ctx.canvas.width;
+			var height = ctx.canvas.height;
+			var r = width/2;
+			var rem = width / 200;
+			function drawBackground(){
+				ctx.save();
+				ctx.translate(r,r);
+				ctx.beginPath();
+				ctx.lineWidth = 10 * rem;
+				ctx.arc(0,0,r-5 * rem,0,2*Math.PI,false);
+				ctx.stroke();
+
+
+				var hourNumbers = [3,4,5,6,7,8,9,10,11,12,1,2];
+				ctx.font = 16 *rem + "px arial";
+				ctx.textAlign = "center";
+				ctx.textBaseline = "middle";
+				hourNumbers.forEach(function(item,index){
+					var rad = 2*Math.PI/12*index;
+					var x = Math.cos(rad) * (r - 30 * rem);
+					var y = Math.sin(rad) * (r - 30 * rem);
+					ctx.fillText(item,x,y);
+				})
+
+				for(var i = 0;i < 60;i++){
+					var rad = 2 * Math.PI / 60 * i;
+					var x = Math.cos(rad) * (r - 15 * rem);
+					var y = Math.sin(rad) * (r - 15 * rem);
+					ctx.beginPath();
+					if(i%5 == 0){
+						ctx.fillStyle = "#000";
+					}else{
+						ctx.fillStyle = "#ccc";
+					}
+					ctx.arc(x,y,2,0,2*Math.PI,false);
+					ctx.fill();
+				}
+
+				
+			}
+			function drawHour(hour,minute){
+				ctx.save();
+				ctx.beginPath();
+				var rad = 2 * Math.PI / 12 * hour;
+				var extrRad = 2 * Math.PI / 12 / 60 * minute;
+				ctx.rotate(rad + extrRad);
+				ctx.lineWidth = 6 * rem;
+				ctx.moveTo(0,7 * rem);
+				ctx.lineCap = "round";
+				ctx.lineTo(0, - r / 2);
+				ctx.stroke();
+				ctx.restore();
+			}
+			function drawMinute(minute){
+				ctx.save();
+				ctx.beginPath();
+				var rad = 2 * Math.PI / 60 * minute;
+				// var extrRad = 2 * Math.PI / 60 / 60 * seconds;
+				ctx.rotate(rad);
+				ctx.lineWidth = 4 * rem;
+				ctx.moveTo(0,12 * rem);
+				ctx.lineCap = "round";
+				ctx.lineTo(0, 35 * rem - r);
+				ctx.strokeStyle = "#615F5F";
+				ctx.stroke();
+				ctx.restore();
+			}
+			function drawSeconds(seconds){
+				ctx.save();
+				ctx.beginPath();
+				ctx.fillStyle = "#B94D4D";
+				var rad = 2 * Math.PI / 60 * seconds;
+				ctx.rotate(rad);
+				ctx.moveTo(-2 * rem,15 * rem);
+				ctx.lineTo(2 * rem,15 * rem);
+				ctx.lineTo(1,20 * rem - r);
+				ctx.lineTo(-1,20 * rem - r);
+				ctx.fill();
+				ctx.restore();
+			}
+
+			function drawDot(){
+				ctx.beginPath();
+				ctx.fillStyle = "#fff";
+				ctx.arc(0,0,3 * rem,0,2*Math.PI,false);
+				ctx.fill();
+			}
+
+			
+
+			function drawClock(){
+				ctx.clearRect(0,0,width,height);
+				var date = new Date();
+				var hours = date.getHours();
+				var minutes = date.getMinutes();
+				var seconds = date.getSeconds();
+				drawBackground();
+				drawHour(hours,minutes);
+				drawMinute(minutes);
+				drawSeconds(seconds);
+				drawDot();
+				ctx.restore();
+			}
+
+			drawClock();
+			setInterval(drawClock,1000);
+		}
+		})();
+	</script>
+	<script type="text/javascript" src="numMatirx.js"></script>
+</head>
+<body>
+	<div class="clockCon">
+		<canvas id="clock" height="300px" width="300px">您的当前浏览器不支持，请更换浏览器试试。</canvas>
+	</div>
+	<div class="blur-img">
+		<img src="huoying.jpg">
+		<canvas id="blur-image">您的当前浏览器不支持，请更换浏览器试试。</canvas>
+		<div id="resetBtn" class="btn">重置</div>
+		<div id="openBtn" class="btn">打开</div>
+	</div>
+	<div class="timeCut">
+		<canvas id="timeCut">
+			您的当前浏览器不支持，请更换浏览器试试。
+		</canvas>
+	</div>
+	<div class="ball">
+		<canvas id="ball">您的当前浏览器不支持，请更换浏览器试试。</canvas>
+	</div>
+	<script type="text/javascript">
+		(function(){
+			var width = 600;
+			var height = 400;
+			var dom = document.getElementById('blur-image');
+			var ctx = dom.getContext("2d");
+			dom.width = width;
+			dom.height = height;
+			var blurImg = new Image();
+			blurImg.src = "huoying.jpg";
+			var initR = 50;
+			var clipPos = {
+				x:Math.random() * width,
+				y:Math.random() * height,
+				r:initR,
+			}
+
+			blurImg.onload = function(){
+				initCanvas();
+			}
+			function initCanvas(){
+				
+				draw(blurImg,clipPos);
+			}
+			function clipImage(clipPos){
+				ctx.beginPath();
+				ctx.arc(clipPos.x,clipPos.y,clipPos.r,0,Math.PI * 2,false);
+				ctx.clip();
+			}
+			function draw(image,clipPos){
+				ctx.clearRect(0,0,width,height);//位置，大小
+				ctx.save();
+				
+				if(clipPos.x + initR > width){
+					clipPos.x = width- initR;
+				}else if(clipPos.y + initR > height){
+					clipPos.y = height - initR;
+				}else if(clipPos.x - initR < 0){
+					clipPos.x = initR;
+				}else if(clipPos.y - initR < 0){
+					clipPos.y = initR;
+				}
+				clipImage(clipPos);
+				ctx.drawImage(image,0,0,width,height);
+				ctx.restore();
+			}
+			var resetBtn = document.getElementById('resetBtn');
+			var openBtn = document.getElementById('openBtn');
+			resetBtn.onclick = function(){
+				clipPos = {
+					x:Math.random() * width,
+					y:Math.random() * height,
+					r:initR,
+				}
+				initCanvas();
+			}
+			openBtn.onclick = function(){
+				var timer = setInterval(function(){
+					clipPos.r = clipPos.r + 80;
+					draw(blurImg,clipPos);
+					if(clipPos.r > 1000){
+						clearInterval(timer);
+					}
+				},100);
+			}
+		})();
+	</script>
+	<script type="text/javascript">
+		(function(){
+			var timeCut = document.getElementById('timeCut');
+			var ictx = timeCut.getContext("2d");
+			var width = 1200;
+			var height = 400;
+			var MARGIN_LEFT = 50;
+			var MARGIN_TOP = 50;
+			var RADIUS = 5;
+			var DISTANCE = 1;
+			timeCut.width = width;
+			timeCut.height = height;
+			render(ictx);
+			var timer = setInterval(function(){
+				render(ictx);
+			},1000);
+			function render(ictx){
+				ictx.clearRect(0,0,width,height);
+				var date = new Date();
+				var hour = date.getHours();
+				var minute = date.getMinutes();
+				var second = date.getSeconds();
+				renderDigit(MARGIN_LEFT,MARGIN_TOP,parseInt(hour/10),ictx);
+				renderDigit(MARGIN_LEFT + 8 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(hour%10),ictx);
+				renderDigit(MARGIN_LEFT + 14 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,10,ictx);
+				renderDigit(MARGIN_LEFT + 20 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(minute/10),ictx);
+				renderDigit(MARGIN_LEFT + 28 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(minute%10),ictx);
+				renderDigit(MARGIN_LEFT + 34 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,10,ictx);
+				renderDigit(MARGIN_LEFT + 40 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(second/10),ictx);
+				renderDigit(MARGIN_LEFT + 48 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(second%10),ictx);
+				ictx.restore();
+			}
+			function renderDigit(x,y,digit,ictx){
+
+				for(var i = 0;i < numMatirx[digit].length;i++){
+					for(var j = 0;j < numMatirx[digit][i].length;j++){
+						if(numMatirx[digit][i][j] == 1){
+							ictx.beginPath();
+							ictx.arc(x + j * (RADIUS * 2 + DISTANCE),y + i * (RADIUS * 2 + DISTANCE),RADIUS,0,Math.PI * 2,false);
+							ictx.closePath();
+							ictx.fillStyle = "#009688";
+							ictx.fill();
+						}
+					}
+				}
+			}
+		})();
+	</script>
+	<script type="text/javascript">
+		(function(){
+			var ball = document.getElementById('ball');
+			var ctx = ball.getContext("2d");
+			var width = 600;
+			var height = 400;
+			ball.width = width;
+			ball.height = height;
+		})();
+	</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

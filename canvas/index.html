@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>算法界面演示</title>
+	<link rel="stylesheet" type="text/css" href="bt.css">
+	<script type="text/javascript" src="jq.js"></script>
+	<script type="text/javascript" src="bt.js"></script>
+	<style type="text/css">
+		*{
+			padding: 0px;
+			margin: 0px;
+		}
+		.title{
+			text-align: center;
+		}
+		.modal-backdrop{
+			z-index: -1;
+			height: 500px;
+		}
+		.modal-dialog{
+			position: relative;
+			z-index: 3;
+			background-color: white;
+		}
+		.modal{
+			z-index: 1500;
+		}
+	</style>
+	<script type="text/javascript">
+		function isRegisterUserName(s){ //匹配用户名（有5-20个字符组成）  
+			var patrn=/^[a-zA-Z]{1}([a-zA-Z0-9]|[._]){4,19}$/;   
+			if (!patrn.exec(s)) return false  
+			return true  
+		} 
+		var a = isRegisterUserName("1weewdmk213dsf");
+		console.log(a);
+		var t = "   java     script ";
+		var c = t.match(/\b[\w]+\b/g);
+		//string的match方法可以匹配到到正则对应的元素与exec在全局g的作用下不同的是match会返回的是所有匹配结果的数组，但是exec只返回第一个。
+		c  = t.replace(/\b\s+\b/g,"");//去除字符串里的空格
+		var b = t.replace(/\s/g,"");//去除所有的空格
+		console.log(c);
+		//  \w \W \s \S \b \B \d \D [^...] [...]
+		//  {n,m} {n} ?({0,1}) +({1,}) *({0,})
+		//  (...) (?...) \n |
+		//  g i m
+		//  search()无g replace() exec()无g match()  
+
+	</script>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+		<h3 class="title col-md-10 col-md-offset-1">算法演示界面</h3>
+	</div>
+	<div class="modal fade" id="judgeScore" tabindex="1" role="dialog" aria-labelledby="judgeScoreLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">请打分</h4>
+                </div>
+                <div class="modal-body">
+                    <form name="judgeScoreForm" novalidate>
+                        <div class="form-group">
+                            <label class="control-label">打分</label>
+                            <input type="text" class="form-control"  required >
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" ng-click="updateScore()" ng-disabled="judgeScoreForm.$invalid">提交</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+		<button type="button" class="btn btn-primary btn-lg judgescore" data-toggle="modal" data-target="#judgeScore">
+        打分
+    </button>
+	</div>
+</body>
+</html>
