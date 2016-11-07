@@ -51,7 +51,7 @@
 			/*background-color: red;*/
 			margin: 0px auto;
 			display: block;
-			width: 1200px;
+			width: 100%;
 		}
 		#ball{
 			background-color: #ccc;
@@ -177,7 +177,7 @@
 </head>
 <body>
 	<div class="clockCon">
-		<canvas id="clock" height="300px" width="300px">您的当前浏览器不支持，请更换浏览器试试。</canvas>
+		<canvas id="clock" height="400px" width="400px">您的当前浏览器不支持，请更换浏览器试试。</canvas>
 	</div>
 	<div class="blur-img">
 		<img src="huoying.jpg">
@@ -264,24 +264,98 @@
 		(function(){
 			var timeCut = document.getElementById('timeCut');
 			var ictx = timeCut.getContext("2d");
-			var width = 1200;
+			var width = 1300;
 			var height = 400;
-			var MARGIN_LEFT = 50;
-			var MARGIN_TOP = 50;
-			var RADIUS = 5;
+			var MARGIN_LEFT = 150;
+			var MARGIN_TOP = 150;
+			var RADIUS = 3;
 			var DISTANCE = 1;
+			var balls = [];
+			var ballColors = ["#ec1500","#009688","#9C27B0","#FFEB3B","#8BC34A"];
+			var prevHour = new Date().getHours(),prevMinute = new Date().getMinutes(),prevSecond = new Date().getSeconds();
 			timeCut.width = width;
 			timeCut.height = height;
 			render(ictx);
 			var timer = setInterval(function(){
 				render(ictx);
-			},1000);
+			},50);
+			
+			function differNum(hour,minute,second){
+				if(parseInt(prevHour/10) != parseInt(hour/10)){
+					addBalls(MARGIN_LEFT,MARGIN_TOP,parseInt(hour/10));
+				}
+				if(parseInt(prevHour%10) != parseInt(hour%10)){
+					addBalls(MARGIN_LEFT + 8 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(hour%10));
+				}
+				if(parseInt(prevMinute/10) != parseInt(minute/10)){
+					addBalls(MARGIN_LEFT + 28 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(minute/10));
+				}
+				if(parseInt(prevMinute%10) != parseInt(minute%10)){
+					addBalls(MARGIN_LEFT + 28 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(minute%10));
+				}
+				if(parseInt(prevSecond/10) != parseInt(second/10)){
+					addBalls(MARGIN_LEFT + 40 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(second/10));
+				}
+				if(parseInt(prevSecond%10) != parseInt(second%10)){
+					addBalls(MARGIN_LEFT + 48 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(second%10));
+				}
+			}
+			function addBalls(x,y,num){
+				for(var i = 0;i < numMatirx[num].length;i++){
+					for(var j = 0;j < numMatirx[num][i].length;j++){
+						if(numMatirx[num][i][j] == 1){
+							balls.push({x:x + j * (RADIUS * 2 + DISTANCE),y:y + i * (RADIUS * 2 + DISTANCE),r:RADIUS,g:Math.round(Math.random()*3) + 1,vx:Math.round((1+Math.random()*4)*Math.pow(-1,Math.round(Math.random()*1000))),vy:1+Math.round(Math.random()*5*Math.pow(-1,Math.round(Math.random()*1000))),elastic:0.5});
+						}
+					}
+				}
+
+
+			}
+			function rednerBalls(){
+				// ictx.clearRect(0,0,width,height);
+				for(var i = 0;i < balls.length;i++){
+					ictx.beginPath();
+					ictx.arc(balls[i].x,balls[i].y,balls[i].r,0,Math.PI * 2,false);
+					ictx.closePath();
+					ictx.fillStyle = ballColors[Math.round(Math.random()*5)];
+					ictx.fill();
+				}
+			}
+			function updateBallAttr(){
+				for(var i = 0;i<balls.length;i++){
+					balls[i].x += balls[i].vx;
+					balls[i].y += balls[i].vy;
+					balls[i].vy += balls[i].g;
+					// if(balls[i].x > ictx.canvas.width - balls[i].r || balls[i].x < balls[i].r){
+					// 	if(balls[i].x > ictx.canvas.width - balls[i].r){
+					// 		balls[i].x = ictx.canvas.width - balls[i].r;
+					// 	}else{
+					// 		balls[i].x = balls[i].r;
+					// 	}
+						
+					// 	balls[i].vx = -balls[i].vx * balls[i].elastic;
+					// }
+					if(balls[i].y > ictx.canvas.height - balls[i].r || balls[i].y < balls[i].r){
+						if(balls[i].y > ictx.canvas.height - balls[i].r){
+							balls[i].y = ictx.canvas.height - balls[i].r;
+						}else{
+							balls[i].y > balls[i].r;
+						}
+						balls[i].vy = -balls[i].vy * balls[i].elastic;
+					}
+				}
+
+			}
+
+
+
 			function render(ictx){
 				ictx.clearRect(0,0,width,height);
 				var date = new Date();
 				var hour = date.getHours();
 				var minute = date.getMinutes();
 				var second = date.getSeconds();
+				
 				renderDigit(MARGIN_LEFT,MARGIN_TOP,parseInt(hour/10),ictx);
 				renderDigit(MARGIN_LEFT + 8 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(hour%10),ictx);
 				renderDigit(MARGIN_LEFT + 14 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,10,ictx);
@@ -291,6 +365,12 @@
 				renderDigit(MARGIN_LEFT + 40 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(second/10),ictx);
 				renderDigit(MARGIN_LEFT + 48 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(second%10),ictx);
 				ictx.restore();
+				differNum(hour,minute,second);
+				prevHour = hour;
+				prevMinute = minute;
+				prevSecond = second;
+				rednerBalls();
+				updateBallAttr();
 			}
 			function renderDigit(x,y,digit,ictx){
 
@@ -310,12 +390,51 @@
 	</script>
 	<script type="text/javascript">
 		(function(){
+			var ballAttr = {x:100,y:100,r:10,g:2,vx:3,vy:-3,elastic:0.5,color:"#dfd"};
 			var ball = document.getElementById('ball');
 			var ctx = ball.getContext("2d");
 			var width = 600;
 			var height = 400;
 			ball.width = width;
 			ball.height = height;
+			render();
+			var timer = setInterval(function(){
+				render();
+				updateBallAttr();
+			},50);
+			function updateBallAttr(){
+				ballAttr.x += ballAttr.vx;
+				ballAttr.y += ballAttr.vy;
+				ballAttr.vy += ballAttr.g;
+				if(ballAttr.x > ctx.canvas.width - ballAttr.r || ballAttr.x < ballAttr.r){
+					if(ballAttr.x > ctx.canvas.width - ballAttr.r){
+						ballAttr.x = ctx.canvas.width - ballAttr.r;
+					}else{
+						ballAttr.x = ballAttr.r;
+					}
+					
+					ballAttr.vx = -ballAttr.vx * ballAttr.elastic;
+				}
+				if(ballAttr.y > ctx.canvas.height - ballAttr.r || ballAttr.y < ballAttr.r){
+					if(ballAttr.y > ctx.canvas.height - ballAttr.r){
+						ballAttr.y = ctx.canvas.height - ballAttr.r;
+					}else{
+						ballAttr.y > ballAttr.r;
+					}
+					ballAttr.vy = -ballAttr.vy * ballAttr.elastic;
+				}
+
+				
+			}
+			function render(){
+				ctx.clearRect(0,0,width,height);
+				ctx.beginPath();
+				ctx.arc(ballAttr.x,ballAttr.y,ballAttr.r,0,Math.PI * 2,false);
+				ctx.closePath();
+				ctx.fillStyle = ballAttr.color;
+				ctx.fill();
+				ctx.restore();
+			}
 		})();
 	</script>
 </body>
