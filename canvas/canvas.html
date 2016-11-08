@@ -58,6 +58,9 @@
 			margin:0px auto;
 			display: block;
 		}
+		.drawImage{
+			background-color: gray;
+		}
 	</style>
 	<script type="text/javascript">
 		(function(){
@@ -186,12 +189,13 @@
 		<div id="openBtn" class="btn">打开</div>
 	</div>
 	<div class="timeCut">
-		<canvas id="timeCut">
-			您的当前浏览器不支持，请更换浏览器试试。
-		</canvas>
+		<canvas id="timeCut">您的当前浏览器不支持，请更换浏览器试试。</canvas>
 	</div>
 	<div class="ball">
 		<canvas id="ball">您的当前浏览器不支持，请更换浏览器试试。</canvas>
+	</div>
+	<div class="drawImage">
+		<canvas id="drawImage">您的当前浏览器不支持，请更换浏览器试试。</canvas>
 	</div>
 	<script type="text/javascript">
 		(function(){
@@ -268,16 +272,16 @@
 			var height = 400;
 			var MARGIN_LEFT = 150;
 			var MARGIN_TOP = 150;
-			var RADIUS = 3;
+			var RADIUS = 5;
 			var DISTANCE = 1;
 			var balls = [];
-			var ballColors = ["#ec1500","#009688","#9C27B0","#FFEB3B","#8BC34A"];
+			var ballColors = ["#ec1500","#009688","#9C27B0","#FFEB3B","#8BC34A","#FF9800","#795548","#A417B1","#19D209"];
 			var prevHour = new Date().getHours(),prevMinute = new Date().getMinutes(),prevSecond = new Date().getSeconds();
 			timeCut.width = width;
 			timeCut.height = height;
 			render(ictx);
 			var timer = setInterval(function(){
-				render(ictx);
+				// render(ictx);
 			},50);
 			
 			function differNum(hour,minute,second){
@@ -304,7 +308,7 @@
 				for(var i = 0;i < numMatirx[num].length;i++){
 					for(var j = 0;j < numMatirx[num][i].length;j++){
 						if(numMatirx[num][i][j] == 1){
-							balls.push({x:x + j * (RADIUS * 2 + DISTANCE),y:y + i * (RADIUS * 2 + DISTANCE),r:RADIUS,g:Math.round(Math.random()*3) + 1,vx:Math.round((1+Math.random()*4)*Math.pow(-1,Math.round(Math.random()*1000))),vy:1+Math.round(Math.random()*5*Math.pow(-1,Math.round(Math.random()*1000))),elastic:0.5});
+							balls.push({x:x + j * (RADIUS * 2 + DISTANCE),y:y + i * (RADIUS * 2 + DISTANCE),r:RADIUS,g:Math.round(Math.random()*3) + 1,vx:Math.round((2+Math.random()*4)*Math.pow(-1,Math.round(Math.random()*1000))),vy:1+Math.round(Math.random()*5*Math.pow(-1,Math.round(Math.random()*1000))),elastic:0.6});
 						}
 					}
 				}
@@ -317,7 +321,7 @@
 					ictx.beginPath();
 					ictx.arc(balls[i].x,balls[i].y,balls[i].r,0,Math.PI * 2,false);
 					ictx.closePath();
-					ictx.fillStyle = ballColors[Math.round(Math.random()*5)];
+					ictx.fillStyle = ballColors[Math.round(Math.random()*9)];
 					ictx.fill();
 				}
 			}
@@ -343,7 +347,19 @@
 						}
 						balls[i].vy = -balls[i].vy * balls[i].elastic;
 					}
+
+
 				}
+				var cnt = 0;
+				for(var j = 0;j<balls.length;j++){
+					if(balls[j].x + RADIUS <= ictx.canvas.width && balls[j].x - RADIUS >= 0){
+						balls[cnt++] = balls[j];
+					}
+				}
+				while(balls.length > Math.min(550,cnt)){
+					balls.pop();
+				}
+				console.log(balls.length);
 
 			}
 
@@ -399,8 +415,8 @@
 			ball.height = height;
 			render();
 			var timer = setInterval(function(){
-				render();
-				updateBallAttr();
+				// render();
+				// updateBallAttr();
 			},50);
 			function updateBallAttr(){
 				ballAttr.x += ballAttr.vx;
@@ -435,6 +451,17 @@
 				ctx.fill();
 				ctx.restore();
 			}
+		})();
+	</script>
+	<script type="text/javascript">
+		(function(){
+			var drawImage = document.getElementById("drawImage");
+			var ctx = drawImage.getContext("2d");
+			var height = 600;
+			var width = 600;
+			drawImage.width = width;
+			drawImage.height = height;
+
 		})();
 	</script>
 </body>
