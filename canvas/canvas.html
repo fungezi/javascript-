@@ -60,6 +60,19 @@
 		}
 		.drawImage{
 			background-color: gray;
+			margin-bottom: 100px;
+		}
+		#drawImage{
+			background-color: white;
+			margin: 0px auto;
+			display: block;
+
+		}
+		#scaleControll{
+			width: 500px;
+			display: block;
+			margin: 0px auto;
+			padding: 20px 0px;
 		}
 	</style>
 	<script type="text/javascript">
@@ -196,6 +209,7 @@
 	</div>
 	<div class="drawImage">
 		<canvas id="drawImage">您的当前浏览器不支持，请更换浏览器试试。</canvas>
+		<input id="scaleControll" type="range" name="" value=1 step="0.1" min=0.5 max="3">
 	</div>
 	<script type="text/javascript">
 		(function(){
@@ -457,11 +471,38 @@
 		(function(){
 			var drawImage = document.getElementById("drawImage");
 			var ctx = drawImage.getContext("2d");
+			var sldier = document.getElementById("scaleControll");
 			var height = 600;
 			var width = 600;
+			var scale = 1.5;
+
+			--------------------使用离屏之作水印 以及 放大镜效果-----------------
+			
 			drawImage.width = width;
 			drawImage.height = height;
+			sldier.value = scale;
+			var scaleImage = new Image();
+			scaleImage.src = "shuai.jpg";
+			scaleImage.onload = function(){
+				renderScaleImage(scale);
+			}
+			function renderScaleImage(scale){
+				ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+				var imageWidth = 600 * scale;
+				var imageHeight = 600 * scale;
+				var dx = Math.round((ctx.canvas.width - imageWidth)/2);
+				var dy = Math.round((ctx.canvas.height - imageHeight)/2);
+				ctx.drawImage(scaleImage,dx,dy,imageWidth,imageHeight);
+			}
 
+			sldier.onmousemove = function(){
+				scale = sldier.value;
+				renderScaleImage(scale);
+			}
+			sldier.onchange = function(){
+				scale = sldier.value;
+				renderScaleImage(scale);
+			}
 		})();
 	</script>
 </body>
