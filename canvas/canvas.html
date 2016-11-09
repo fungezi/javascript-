@@ -74,6 +74,9 @@
 			margin: 0px auto;
 			padding: 20px 0px;
 		}
+		#watermark{
+			display: none;
+		}
 	</style>
 	<script type="text/javascript">
 		(function(){
@@ -209,7 +212,8 @@
 	</div>
 	<div class="drawImage">
 		<canvas id="drawImage">您的当前浏览器不支持，请更换浏览器试试。</canvas>
-		<input id="scaleControll" type="range" name="" value=1 step="0.1" min=0.5 max="3">
+		<canvas id="watermark">您的当前浏览器不支持，请更换浏览器试试。</canvas>
+		<input id="scaleControll" type="range" name="" value=1 step="0.05" min=0.5 max="3">
 	</div>
 	<script type="text/javascript">
 		(function(){
@@ -476,13 +480,26 @@
 			var width = 600;
 			var scale = 1.5;
 
-			--------------------使用离屏之作水印 以及 放大镜效果-----------------
-			
+			// --------------------使用离屏之作水印 以及 放大镜效果-----------------
+
 			drawImage.width = width;
 			drawImage.height = height;
 			sldier.value = scale;
 			var scaleImage = new Image();
 			scaleImage.src = "shuai.jpg";
+			scaleImage.width = width/2;
+			scaleImage.height = height/2;
+
+			var watermark = document.getElementById("watermark");
+			var wCtx = watermark.getContext("2d");
+			watermark.width = 200;
+			watermark.height = 40;
+			wCtx.font = "bold 20px arial";
+			wCtx.lineWidth = 1;
+			wCtx.fillStyle = "rgba(0,0,0,0.3)";
+			wCtx.textBaseline = "middle";
+			wCtx.fillText("== Made By YXL ==",10,20);
+
 			scaleImage.onload = function(){
 				renderScaleImage(scale);
 			}
@@ -493,6 +510,7 @@
 				var dx = Math.round((ctx.canvas.width - imageWidth)/2);
 				var dy = Math.round((ctx.canvas.height - imageHeight)/2);
 				ctx.drawImage(scaleImage,dx,dy,imageWidth,imageHeight);
+				ctx.drawImage(watermark,ctx.canvas.width -  watermark.width -50,ctx.canvas.height - watermark.height -10);
 			}
 
 			sldier.onmousemove = function(){
