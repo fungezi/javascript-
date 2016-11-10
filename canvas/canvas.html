@@ -214,6 +214,7 @@
 		<canvas id="drawImage">您的当前浏览器不支持，请更换浏览器试试。</canvas>
 		<canvas id="watermark">您的当前浏览器不支持，请更换浏览器试试。</canvas>
 		<input id="scaleControll" type="range" name="" value=1 step="0.05" min=0.5 max="3">
+		<canvas id="bigImage">您的当前浏览器不支持，请更换浏览器试试。</canvas>
 	</div>
 	<script type="text/javascript">
 		(function(){
@@ -377,7 +378,7 @@
 				while(balls.length > Math.min(550,cnt)){
 					balls.pop();
 				}
-				console.log(balls.length);
+				// console.log(balls.length);
 
 			}
 
@@ -478,10 +479,28 @@
 			var sldier = document.getElementById("scaleControll");
 			var height = 600;
 			var width = 600;
-			var scale = 1.5;
-
+			var scale = 1;
+			var bigScale = 2;
+			var isMouseDown = false;
 			// --------------------使用离屏之作水印 以及 放大镜效果-----------------
-
+			var bigImage = document.getElementById("bigImage");
+			bigImage.width = bigScale * width;
+			bigImage.height = bigScale * height;
+			bCtx = bigImage.getContext("2d");
+			var bigImagePic = new Image();
+			bigImagePic.src = "shuai.jpg";
+			bigImagePic.onload = function(){
+				bCtx.drawImage(bigImagePic,0,0,bCtx.canvas.width,bCtx.canvas.height);
+			}
+			// function clipImage(pos){
+			// 	bCtx.save();
+			// 	bCtx.clearRect(0,0,bCtx.canvas.width,bCtx.canvas.height);
+			// 	bCtx.beginPath();
+			// 	bCtx.arc(pos.x * 2,pos.y * 2,100,0,Math.PI * 2,false);
+			// 	bCtx.clip();
+			// 	bCtx.drawImage(bigImage,0,0,bCtx.canvas.width,bCtx.canvas.height);
+			// 	bCtx.restore();
+			// }
 			drawImage.width = width;
 			drawImage.height = height;
 			sldier.value = scale;
@@ -503,6 +522,27 @@
 			scaleImage.onload = function(){
 				renderScaleImage(scale);
 			}
+
+			function makeFilter(pos){
+				// bCtx.clearRect(0,0,bCtx.canvas.width,bCtx.canvas.height);
+				
+
+			}
+			function renderBigImage(pos){
+				var sx = pos.x * bigScale;
+				var sy = pos.y * bigScale;
+				bCtx.clearRect(0,0,bCtx.canvas.width,bCtx.canvas.height);
+				bCtx.save();
+				bCtx.beginPath();
+				bCtx.arc(sx,sy,100,0,Math.PI * 2,false);
+				bCtx.clip();
+				bCtx.drawImage(bigImagePic,0,0,bCtx.canvas.width,bCtx.canvas.height);
+				bCtx.restore();
+				// ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+				renderScaleImage(scale);
+				ctx.drawImage(bigImage,sx - 100,sy -100,200,200,pos.x - 100,pos.y - 100,200,200);
+			}
+
 			function renderScaleImage(scale){
 				ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
 				var imageWidth = 600 * scale;
@@ -521,6 +561,46 @@
 				scale = sldier.value;
 				renderScaleImage(scale);
 			}
+
+
+			// 制作离屏放大镜效果
+
+			// 首先应该了解canvas的鼠标交互操作
+
+			drawImage.onmousedown = function(e){
+				e.preventDefault();
+				var canvasPos = windowToCanvasOfPos(e.clientX,e.clientY);
+				isMouseDown = true;
+				renderBigImage(canvasPos);
+
+			}
+			drawImage.onmousemove = function(e){
+				e.preventDefault();
+				if(isMouseDown){
+					var canvasPos = windowToCanvasOfPos(e.clientX,e.clientY);
+					renderBigImage(canvasPos);
+				}
+			}
+			drawImage.onmouseup = function(e){
+				e.preventDefault();
+				// renderScaleImage(scale);
+				isMouseDown = false;
+			}
+			drawImage.onmouseout = function(e){
+				e.preventDefault();
+				// renderScaleImage(scale);
+				isMouseDown = false;
+
+			}
+
+			function windowToCanvasOfPos(x,y){
+				var bbox = ctx.canvas.getBoundingClientRect();
+				return {
+					x:x - bbox.left,
+					y:y - bbox.top
+				}
+			}
+
 		})();
 	</script>
 </body>
