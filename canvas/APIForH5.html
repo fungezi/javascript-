@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>h5 api 说明</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<div class="fileAPI">
+		<form action="server.js" method="POST" >
+			<input type="text" name="username" placeholder="用户名">
+			<input type="file" id="file" name="file" multiple size="20" accept="image/*">
+			<!-- file表单的文件通过files属性调用 -->
+
+		</form>
+		<button id="fileBtn">显示文件信息</button>
+		<button id="readAsBinaryString">readAsBinaryString</button>
+		<button id="readAstext">readAstext</button>
+		<button id="readAsDataURL">readAsDataURL</button>
+	</div>
+	<div class="dragBox" dragable = "true" id="dragme" style="width:100px;height:100px;background-color:gray"></div>
+	<div id="text" style="width:100px;height:100px;border:1px solid gray"></div>
+
+	<script type="text/javascript">
+		(function(){
+			var fileBtn = document.getElementById("fileBtn");
+			fileBtn.onclick = function(){
+				var file = document.getElementById('file');
+				var fileList = file.files;
+				// document.write(fileList[0].type + "" + fileList[0].size);
+				//blob对象的type和size属性被file继承
+				console.log(fileList[0].type);//打印文件的类型
+				console.log(fileList[0].size);//打印文件大小
+			}
+		})();
+	</script>
+	<script type="text/javascript">
+		(function(){
+			//fileReader接口
+			//首先判断浏览器的支持性
+			console.log(FileReader);//这里的FileReader是一个构造函数
+			//FileReader构造函数产生的对象，该对象有四个方法：
+			//readAsBinaryString(文件读取为二进制字符串)
+			//readAsText(读取为文本)
+			//readAsDataURL(读取为DataURL)
+			//abort(中断读取操作)
+			if(typeof FileReader == "undefined"){
+				// alert("浏览器不支持。");
+
+			}else{
+				document.getElementById("readAsBinaryString").onclick =  function(){
+					readAsBinaryString();
+				};
+				document.getElementById("readAstext").onclick = function(){
+					readAstext();
+				}
+				document.getElementById("readAsDataURL").onclick = function(){
+					readAsDataURL();
+				};
+			}
+
+			function readAsBinaryString(){
+				var reader = new FileReader();
+				var file = document.getElementById("file");
+				reader.readAsBinaryString(file.files[0]);
+				reader.onload = function(){
+					console.log(this.result);
+				}
+			}
+
+			function readAstext(){
+				var reader = new FileReader();
+				var file = document.getElementById("file");
+				reader.readAsText(file.files[0],"utf-8");
+				reader.onload = function(){
+					console.log(this.result);
+				}
+			}
+			function readAsDataURL(){
+				var reader = new FileReader();
+				var file = document.getElementById("file");
+				reader.readAsDataURL(file.files[0]);
+				reader.onload = function(){
+					console.log(this.result);
+				}
+			}
+		})();
+	</script>
+	<script type="text/javascript">
+		(function(){
+				//h5 API for 拖拽
+				var source = document.getElementById("dragme");
+				var dest = document.getElementById("text");
+				source.addEventListener("dragstart",function(e){
+					var dt = e.dataTransfer;
+					// var text = dt.getData("text/plain");
+					dt.effectAllowed = "link";
+					dt.setData("text/plain","你好");
+				},false);
+
+				dest.addEventListener("dragend",function(e){
+					e.preventDefault();
+				},false);
+
+				dest.addEventListener("drop",function(e){
+					var dt = e.dataTransfer;
+					var text = dt.getData("text/plain");
+					dest.textContent += text;
+					e.preventDefault();
+					e.stopPropagation();
+				},false);
+
+				document.ondragover = function(e){
+					e.preventDefault();
+				}
+				document.ondrop = function(e){
+					e.preventDefault();
+				}
+		})();
+	</script>
+</body>
+</html>
