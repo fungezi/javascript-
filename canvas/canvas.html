@@ -34,7 +34,7 @@
 			top: 0px;
 			left: 0px;
 		}
-		
+
 		#resetBtn{
 			/*background-color: red;*/
 			left: 200px;
@@ -130,7 +130,7 @@
 					ctx.fill();
 				}
 
-				
+
 			}
 			function drawHour(hour,minute){
 				ctx.save();
@@ -180,7 +180,7 @@
 				ctx.fill();
 			}
 
-			
+
 
 			function drawClock(){
 				ctx.clearRect(0,0,width,height);
@@ -250,7 +250,7 @@
 				initCanvas();
 			}
 			function initCanvas(){
-				
+
 				draw(blurImg,clipPos);
 			}
 			function clipImage(clipPos){
@@ -261,7 +261,7 @@
 			function draw(image,clipPos){
 				ctx.clearRect(0,0,width,height);//位置，大小
 				ctx.save();
-				
+
 				if(clipPos.x + initR > width){
 					clipPos.x = width- initR;
 				}else if(clipPos.y + initR > height){
@@ -313,9 +313,9 @@
 			timeCut.height = height;
 			render(ictx);
 			var timer = setInterval(function(){
-				// render(ictx);
+				render(ictx);
 			},50);
-			
+
 			function differNum(hour,minute,second){
 				if(parseInt(prevHour/10) != parseInt(hour/10)){
 					addBalls(MARGIN_LEFT,MARGIN_TOP,parseInt(hour/10));
@@ -368,7 +368,7 @@
 					// 	}else{
 					// 		balls[i].x = balls[i].r;
 					// 	}
-						
+
 					// 	balls[i].vx = -balls[i].vx * balls[i].elastic;
 					// }
 					if(balls[i].y > ictx.canvas.height - balls[i].r || balls[i].y < balls[i].r){
@@ -403,7 +403,7 @@
 				var hour = date.getHours();
 				var minute = date.getMinutes();
 				var second = date.getSeconds();
-				
+
 				renderDigit(MARGIN_LEFT,MARGIN_TOP,parseInt(hour/10),ictx);
 				renderDigit(MARGIN_LEFT + 8 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,parseInt(hour%10),ictx);
 				renderDigit(MARGIN_LEFT + 14 * (RADIUS * 2 + DISTANCE),MARGIN_TOP,10,ictx);
@@ -460,7 +460,7 @@
 					}else{
 						ballAttr.x = ballAttr.r;
 					}
-					
+
 					ballAttr.vx = -ballAttr.vx * ballAttr.elastic;
 				}
 				if(ballAttr.y > ctx.canvas.height - ballAttr.r || ballAttr.y < ballAttr.r){
@@ -472,7 +472,7 @@
 					ballAttr.vy = -ballAttr.vy * ballAttr.elastic;
 				}
 
-				
+
 			}
 			function render(){
 				ctx.clearRect(0,0,width,height);
@@ -621,21 +621,3 @@
 	</script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
